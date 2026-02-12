@@ -1,0 +1,10 @@
+# Build folders
+bin/
+obj/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
