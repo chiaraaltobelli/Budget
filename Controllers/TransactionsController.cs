@@ -11,18 +11,18 @@ namespace Budget.Server.Controllers;
 [Route("api/transactions")]
 public class TransactionsController : ControllerBase
 {
-    private readonly BudgetDbContext _dbContext;
+    private readonly BudgetDbContext _db;
 
-    public TransactionsController(BudgetDbContext dbContext)
+    public TransactionsController(BudgetDbContext db)
     {
-        _dbContext = dbContext;
+        _db = db;
     }
 
     [HttpGet]
     [Route("api/gettransactions")]
     public async Task<ActionResult<IEnumerable<Transaction>>> Get()
     {
-        var transactions = await _dbContext.Transactions
+        var transactions = await _db.Transactions
             .OrderByDescending(t => t.Date)
             .Take(100)
             .ToListAsync();
@@ -34,8 +34,8 @@ public class TransactionsController : ControllerBase
     [Route("api/addtransaction")]
     public async Task<ActionResult<Transaction>> Create([FromBody] Transaction transaction)
     {
-        _dbContext.Transactions.Add(transaction);
-        await _dbContext.SaveChangesAsync();
+        _db.Transactions.Add(transaction);
+        await _db.SaveChangesAsync();
         return Ok(transaction);
     }
 }
