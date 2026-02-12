@@ -6,7 +6,7 @@ using Budget.Server.Interfaces;
 namespace Budget.Server.Controllers;
 
 [ApiController]
-[Route("api/[budgets]")]
+[Route("api/budgets")]
 public class BudgetController : ControllerBase
 {
     private readonly IBudgetService _budgetService;
