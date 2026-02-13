@@ -17,7 +17,8 @@ builder.Services.AddDbContext<BudgetDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("BudgetDb")));
 
 builder.Services.AddSingleton<TimeService>();
-builder.Services.AddSingleton<IBudgetService, BudgetService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();
 var app = builder.Build();
 
 
