@@ -1,9 +1,9 @@
 /// Copyright (c) 2026 Chiara Altobelli
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Budget.Server.Data;
 using Budget.Server.Model;
+using Budget.Server.Interfaces;
+using Budget.Server.Results;
 
 namespace Budget.Server.Controllers;
 
@@ -11,31 +11,31 @@ namespace Budget.Server.Controllers;
 [Route("api/transactions")]
 public class TransactionsController : ControllerBase
 {
-    private readonly BudgetDbContext _db;
 
-    public TransactionsController(BudgetDbContext db)
+    private readonly ITransactionService _transactionService;
+    public TransactionsController(ITransactionService transactionService)
     {
-        _db = db;
+        _transactionService = transactionService;
     }
 
     [HttpGet]
-    [Route("api/gettransactions")]
-    public async Task<ActionResult<IEnumerable<Transaction>>> Get()
+    public async Task<ActionResult<Result<IEnumerable<Transaction>>>> Get()
     {
-        var transactions = await _db.Transactions
-            .OrderByDescending(t => t.Date)
-            .Take(100)
-            .ToListAsync();
-
-        return Ok(transactions);
+        var result = await _transactionService.GetTransactionsAsync();
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
     }
 
     [HttpPost]
-    [Route("api/addtransaction")]
-    public async Task<ActionResult<Transaction>> Create([FromBody] Transaction transaction)
+    public async Task<ActionResult<Result<Transaction>>> AddTransaction([FromBody] Transaction transaction)
     {
-        _db.Transactions.Add(transaction);
-        await _db.SaveChangesAsync();
-        return Ok(transaction);
+        var result = await _transactionService.AddTransactionAsync(transaction);
+        if (!result.IsSuccess)        {
+            return BadRequest(result);
+        }
+        return Ok(result);
     }
 }
